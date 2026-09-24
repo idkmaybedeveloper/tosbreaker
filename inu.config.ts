@@ -8,7 +8,7 @@ export default defineConfig({
         id: 'lain.tosbreaker',
         name: 'tosbreaker',
         author: 'bitracker',
-        version: '1.0.0',
+        version: '1.0.1',
         description: {
           en: 'tos breaking features',
           ru: 'фичи, нарушающие tos',

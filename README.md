@@ -71,5 +71,9 @@ and publishes `v<version>`; it refuses to overwrite an existing tag.
 5. prefix its `localStorage` keys with `<name>.`: all features share one plugin storage
 6. update `FEATURES.md`
 
+on/off switches go through `Toggle` (`src/shared/toggle.ts`): it registers the handler only while
+the switch is on and disposes it when turned off. don't register once and check the flag inside
+the handler, every call would still cross into js for nothing.
+
 never change the manifest `id`, it decides whether an install updates the plugin or lands beside it.
 see `AGENTS.md` for runtime rules
