@@ -73,7 +73,7 @@ function generateTlFromSparse(): void {
 
 if (!existsSync(inugram)) {
   fail(`no inugram checkout at ${inugram}\n`
-    + `clone it next to this repo: git clone -b plugins https://github.com/teidesu/inugram.git ../inugram`)
+    + 'clone it next to this repo: git clone -b plugins https://github.com/teidesu/inugram.git ../inugram')
 }
 if (!existsSync(join(inugram, 'sdk/cli'))) fail(`${inugram} has no sdk/cli, is it on the plugins branch?`)
 

@@ -1,8 +1,7 @@
-import type { Feature } from '../../section.js'
-import { Toggle } from '../../shared/toggle.js'
+import { Toggle } from '../shared/toggle.js'
 
 const sponsoredMessages = new Toggle({
-  key: 'ads.sponsored_messages',
+  key: 'sponsored_messages',
   default: true,
   text: 'hide sponsored messages',
   subtitle: 'channels, bots and videos',
@@ -10,7 +9,7 @@ const sponsoredMessages = new Toggle({
 })
 
 const sponsoredPeers = new Toggle({
-  key: 'ads.sponsored_peers',
+  key: 'sponsored_peers',
   default: true,
   text: 'hide sponsored search results',
   register: () => inu.interceptRpc('contacts.getSponsoredPeers', () => ({ _: 'contacts.sponsoredPeersEmpty' })),
@@ -23,7 +22,7 @@ const sponsoredPeers = new Toggle({
  * `expires` is kept so stock doesn't start polling it more often than the server asked for
  */
 const proxyPromo = new Toggle({
-  key: 'ads.proxy_promo',
+  key: 'proxy_promo',
   default: true,
   text: 'hide proxy sponsored channel',
   subtitle: 'the pinned channel when using mtproxy',
@@ -35,15 +34,12 @@ const proxyPromo = new Toggle({
 })
 
 const toggles = [sponsoredMessages, sponsoredPeers, proxyPromo]
+for (const toggle of toggles) toggle.init()
 
-export const ads: Feature = {
-  setup() {
-    for (const toggle of toggles) toggle.init()
-  },
-
-  settings: () => [
-    inu.ui.header('Ads'),
+inu.registerSettings(inu.ui.settingsPage({
+  title: 'no ads',
+  items: () => [
     ...toggles.map(toggle => toggle.check()),
     inu.ui.separator('already loaded ads can stay until the chat is reopened.'),
   ],
-}
+}))

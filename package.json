@@ -1,21 +1,27 @@
 {
   "name": "tosbreaker",
-  "private": true,
   "type": "module",
+  "private": true,
   "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "setup-sdk": "node scripts/setup-sdk.ts",
     "build": "inu build",
     "check": "inu check",
+    "check-scripts": "tsc -p scripts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "dev": "inu dev",
     "dev:release": "inu dev"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^8.3.0",
     "@inugram/cli": "link:../inugram/sdk/cli/dist",
     "@inugram/plugin-types": "link:../inugram/sdk/types",
+    "@types/node": "^24.13.6",
+    "eslint": "^10.11.0",
     "typescript": "^5.9.3"
-  },
-  "engines": {
-    "node": ">=24"
   }
 }

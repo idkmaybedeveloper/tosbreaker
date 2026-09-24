@@ -6,15 +6,6 @@ on:
       artifact-name:
         required: true
         type: string
-    outputs:
-      file-name:
-        value: ${{ jobs.build.outputs.file-name }}
-      version:
-        value: ${{ jobs.build.outputs.version }}
-      tag:
-        value: ${{ jobs.build.outputs.tag }}
-      inugram-sha:
-        value: ${{ jobs.build.outputs.inugram-sha }}
   pull_request:
     paths-ignore:
       - '**.md'
@@ -46,11 +37,6 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
-    outputs:
-      file-name: ${{ steps.info.outputs.file-name }}
-      version: ${{ steps.info.outputs.version }}
-      tag: ${{ steps.info.outputs.tag }}
-      inugram-sha: ${{ steps.info.outputs.inugram-sha }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -85,43 +71,18 @@ jobs:
 
       - name: check
         working-directory: tosbreaker
-        run: pnpm check
+        run: pnpm check && pnpm check-scripts && pnpm lint
 
       - name: build
         working-directory: tosbreaker
         run: pnpm build
 
-      - name: build info
-        id: info
-        working-directory: tosbreaker
-        run: |
-          file=tosbreaker.inu.js
-          version=$(sed -n 's|^// @version *||p' "dist/$file" | head -1)
-          if [ -z "$version" ]; then
-            echo "::error::no @version in dist/$file"
-            exit 1
-          fi
-          {
-            echo "file-name=$file"
-            echo "version=$version"
-            echo "tag=v$version"
-            echo "inugram-sha=$(git -C ../inugram rev-parse HEAD)"
-          } >> "$GITHUB_OUTPUT"
-
       - name: stage artifacts
         working-directory: tosbreaker
         run: |
           mkdir -p out
-          cp 'dist/${{ steps.info.outputs.file-name }}' out/
-          jq -n \
-            --arg version '${{ steps.info.outputs.version }}' \
-            --arg file '${{ steps.info.outputs.file-name }}' \
-            --arg commitSha "$GITHUB_SHA" \
-            --arg inugramRepo "$INUGRAM_REPO" \
-            --arg inugramSha '${{ steps.info.outputs.inugram-sha }}' \
-            --arg repo "$GITHUB_REPOSITORY" \
-            '{version:$version,file:$file,commitSha:$commitSha,inugramRepo:$inugramRepo,inugramSha:$inugramSha,repo:$repo}' \
-            > out/build-info.json
+          cp dist/*.inu.js out/
+          INUGRAM_SHA=$(git -C ../inugram rev-parse HEAD) node scripts/build-info.ts dist out/build-info.json
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

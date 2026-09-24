@@ -2,8 +2,8 @@
 
 tos breaking features in inugram since UHHHH how much?
 
-one inugram plugin, split into sections (`src/sections/`), each with its own page in the plugin's
-settings. what's inside: [FEATURES.md](FEATURES.md).
+a repo of separate inugram plugins, installed one by one: `src/<plugin>/` each, sharing code
+through `src/shared/`. what's inside: [FEATURES.md](FEATURES.md).
 
 ## setup
 
@@ -28,17 +28,17 @@ requirements: node >= 24 (the sdk build needs it), pnpm, git, adb for `dev`.
 ## usage
 
 ```sh
-pnpm check        # manifest, grants, typecheck
-pnpm build        # -> dist/tosbreaker.inu.js
-pnpm dev          # push + hot reload
-pnpm dev:release  # same for desu.inugram
+pnpm check [plugin...]        # manifest, grants, typecheck
+pnpm build [plugin...]        # -> dist/<plugin>.inu.js
+pnpm dev [plugin...]          # push + hot reload
+pnpm dev:release [plugin...]  # same for desu.inugram
 ```
 
 `dev` needs the app running with Settings > Plugins > developer mode on, **in that exact app**:
 beta and release have separate settings. `no reply from ...` means it's off or you picked the
 wrong one.
 
-or just send `dist/tosbreaker.inu.js` to yourself and tap it.
+no plugin names = all of them. or just send `dist/<plugin>.inu.js` to yourself and tap it.
 
 ### global `inu`
 
@@ -50,26 +50,33 @@ cd ../inugram/sdk/cli/dist && pnpm link --global
 
 ## releases
 
-grab `tosbreaker.inu.js` from [releases](../../releases), every build there is attested by github
-actions. to check the file you got was built by this repo's CI from the tagged commit:
+each plugin is released on its own as `<plugin>-v<version>`. grab its `.inu.js` from
+[releases](../../releases), every file there is attested by github actions. to check the file you
+got was built by this repo's CI from the tagged commit:
 
 ```sh
-gh attestation verify tosbreaker.inu.js --repo <owner>/tosbreaker
+gh attestation verify noads.inu.js --repo idkmaybedeveloper/tosbreaker
 ```
 
 per-commit builds (unattested) are in the `build` workflow's artifacts.
 
-cutting one: bump `version` in `inu.config.ts`, push, run the `release` workflow. it builds, attests
-and publishes `v<version>`; it refuses to overwrite an existing tag.
+cutting one: bump the plugin's `version` in `inu.config.ts`, push, then run the `release` workflow
+with the plugin's key (`gh workflow run release.yml -f plugin=noads`). it builds, attests and
+publishes `<plugin>-v<version>`, with notes since that plugin's previous release; it refuses to
+overwrite an existing tag.
 
-## adding a feature
+## adding a plugin
 
-1. `src/sections/<section>/<name>.ts` exporting a `Feature` (`setup()` + `settings()`, see `src/section.ts`)
-2. add it to that section's `features` in `src/sections/<section>/index.ts`
-3. new section? `src/sections/<section>/index.ts` exporting a `Section`, then add it to `sections` in `src/index.ts`
-4. add the grants it needs to `inu.config.ts`
-5. prefix its `localStorage` keys with `<name>.`: all features share one plugin storage
-6. update `FEATURES.md`
+one plugin per thing it does, not a combo plugin with everything inside: people install what they
+want, grants stay minimal, and one breaking doesn't take the others down.
+
+1. `src/<plugin>/index.ts`, registering its own settings page if it has any
+2. an entry under `plugins` in `inu.config.ts` with its manifest and grants, `id` as
+   `lain.tosbreaker.<plugin>`
+3. a section in `FEATURES.md`
+
+code used by more than one plugin goes in `src/shared/`: it's bundled into each plugin separately,
+nothing is shared at runtime. `localStorage` is per plugin, no key prefixes needed.
 
 on/off switches go through `Toggle` (`src/shared/toggle.ts`): it registers the handler only while
 the switch is on and disposes it when turned off. don't register once and check the flag inside

@@ -2,16 +2,16 @@ import { defineConfig } from '@inugram/cli'
 
 export default defineConfig({
   plugins: {
-    tosbreaker: {
-      entry: 'src/index.ts',
+    noads: {
+      entry: 'src/noads/index.ts',
       manifest: {
-        id: 'lain.tosbreaker',
-        name: 'tosbreaker',
+        id: 'lain.tosbreaker.noads',
+        name: 'no ads',
         author: 'bitracker',
-        version: '1.0.1',
+        version: '1.0.0',
         description: {
-          en: 'tos breaking features',
-          ru: 'фичи, нарушающие tos',
+          en: 'hides sponsored messages, sponsored search results and the proxy promo channel',
+          ru: 'скрывает рекламу в каналах, рекламу в поиске и промо-канал прокси',
         },
         icon: 'inu://eyeOff',
         grants: [

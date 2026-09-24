@@ -1,11 +1,12 @@
-# tosbreaker features
+# tosbreaker plugins
 
-> what the plugin does, grouped the same way as its settings (`Settings -> Plugins -> tosbreaker`).
-> keep this updated as features are added/removed.
+> one section per plugin in this repo, in `inu.config.ts` order.
+> keep this updated as plugins/features are added/removed.
 
-everything is toggleable, defaults are "break the tos".
+every plugin is installed on its own, everything inside is toggleable in its settings, defaults are
+"break the tos".
 
-## annoyances
+## `noads`
 
 - hide sponsored messages in channels, bot chats and the video player (`messages.getSponsoredMessages` answers empty, the request never leaves the device)
 - hide sponsored results in search (`contacts.getSponsoredPeers`)
