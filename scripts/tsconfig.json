@@ -12,5 +12,5 @@
     "erasableSyntaxOnly": true,
     "skipLibCheck": true
   },
-  "include": ["."]
+  "include": [".", "../eslint.config.ts"]
 }

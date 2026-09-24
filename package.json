@@ -22,6 +22,7 @@
     "@inugram/plugin-types": "link:../inugram/sdk/types",
     "@types/node": "^24.13.6",
     "eslint": "^10.11.0",
+    "jiti": "^2.7.0",
     "typescript": "^5.9.3"
   }
 }
