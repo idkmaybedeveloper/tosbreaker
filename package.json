@@ -1,0 +1,21 @@
+{
+  "name": "tosbreaker",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.2",
+  "scripts": {
+    "setup-sdk": "node scripts/setup-sdk.ts",
+    "build": "inu build",
+    "check": "inu check",
+    "dev": "inu dev",
+    "dev:release": "inu dev"
+  },
+  "devDependencies": {
+    "@inugram/cli": "link:../inugram/sdk/cli/dist",
+    "@inugram/plugin-types": "link:../inugram/sdk/types",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

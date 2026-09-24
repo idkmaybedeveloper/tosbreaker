@@ -1,0 +1,71 @@
+name: release
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    permissions:
+      contents: read
+    with:
+      artifact-name: tosbreaker-${{ github.sha }}-staging
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: tosbreaker-${{ github.sha }}-staging
+          path: out
+
+      - name: refuse existing tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag='${{ needs.build.outputs.tag }}'
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::release $tag already exists, bump version in inu.config.ts"
+            exit 1
+          fi
+
+      - name: attest plugin
+        uses: actions/attest@281a49d4cbb0a72c9575a50d18f6deb515a11deb # v4
+        with:
+          subject-path: out/${{ needs.build.outputs.file-name }}
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tosbreaker-${{ github.sha }}
+          path: out/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: create github release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag='${{ needs.build.outputs.tag }}'
+          file='${{ needs.build.outputs.file-name }}'
+          # shellcheck disable=SC2016 # the backticks are literal markdown
+          notes=$(printf 'built against %s@%s\n\nverify: `gh attestation verify %s --repo %s`' \
+            "$(jq -r .inugramRepo out/build-info.json)" '${{ needs.build.outputs.inugram-sha }}' \
+            "$file" "$GITHUB_REPOSITORY")
+          gh release create "$tag" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "$tag" \
+            --notes "$notes" \
+            --generate-notes \
+            "out/$file"
