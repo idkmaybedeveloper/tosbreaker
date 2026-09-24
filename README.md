@@ -32,6 +32,8 @@ pnpm check [plugin...]        # manifest, grants, typecheck
 pnpm build [plugin...]        # -> dist/<plugin>.inu.js
 pnpm dev [plugin...]          # push + hot reload
 pnpm dev:release [plugin...]  # same for desu.inugram
+pnpm lint / lint:fix          # eslint, same config as inugram
+pnpm check-scripts            # typecheck node-side scripts and the eslint config
 ```
 
 `dev` needs the app running with Settings > Plugins > developer mode on, **in that exact app**:
@@ -39,6 +41,12 @@ beta and release have separate settings. `no reply from ...` means it's off or y
 wrong one.
 
 no plugin names = all of them. or just send `dist/<plugin>.inu.js` to yourself and tap it.
+
+### pre-commit
+
+`pnpm install` sets up a husky hook (`scripts/pre-commit.ts`) that checks only what the commit
+touches: eslint over staged files, `inu check` if plugin code or config changed, `check-scripts`
+if scripts changed. skip it with `git commit --no-verify` or `SKIP_PRE_COMMIT=1`.
 
 ### global `inu`
 

@@ -14,7 +14,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "dev": "inu dev",
-    "dev:release": "inu dev"
+    "dev:release": "inu dev",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^8.3.0",
@@ -22,6 +23,7 @@
     "@inugram/plugin-types": "link:../inugram/sdk/types",
     "@types/node": "^24.13.6",
     "eslint": "^10.11.0",
+    "husky": "^9.1.7",
     "jiti": "^2.7.0",
     "typescript": "^5.9.3"
   }
