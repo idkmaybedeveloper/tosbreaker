@@ -6,6 +6,9 @@ on:
       artifact-name:
         required: true
         type: string
+      build-num:
+        required: false
+        type: string
   pull_request:
     paths-ignore:
       - '**.md'
@@ -49,9 +52,13 @@ jobs:
         run: pnpm check && pnpm check-scripts && pnpm lint
 
       - name: build
+        env:
+          TOSBREAKER_BUILD: ${{ inputs.build-num }}
         run: pnpm build
 
       - name: stage artifacts
+        env:
+          TOSBREAKER_BUILD: ${{ inputs.build-num }}
         run: |
           mkdir -p out
           cp dist/*.inu.js out/

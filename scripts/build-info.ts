@@ -19,12 +19,13 @@ const plugins = readdirSync(distDir)
     const version = /^\/\/ @version\s+(\S+)/m.exec(header)?.[1]
     if (!version) throw new Error(`no @version in ${file}`)
     const name = file.slice(0, -SUFFIX.length)
-    return { name, file, version, tag: `${name}-v${version}` }
+    return { name, file, version }
   })
 
 if (plugins.length === 0) throw new Error(`no ${SUFFIX} files in ${distDir}`)
 
 const info = {
+  build: process.env.TOSBREAKER_BUILD || null,
   plugins,
   commitSha: process.env.GITHUB_SHA ?? null,
   repo: process.env.GITHUB_REPOSITORY ?? null,
@@ -32,4 +33,4 @@ const info = {
 }
 writeFileSync(outFile, `${JSON.stringify(info, null, 2)}\n`)
 
-for (const plugin of plugins) console.log(`${plugin.tag}  ${plugin.file}`)
+for (const plugin of plugins) console.log(`${plugin.name}@${plugin.version}  ${plugin.file}`)

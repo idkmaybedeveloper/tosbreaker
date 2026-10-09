@@ -49,20 +49,20 @@ pnpm add -g @inugram/cli
 
 ## releases
 
-each plugin is released on its own as `<plugin>-v<version>`. grab its `.inu.js` from
-[releases](../../releases), every file there is attested by github actions. to check the file you
-got was built by this repo's CI from the tagged commit:
+all plugins are released together under one build number: release `v<N>` carries every
+`<plugin>.inu.js`, each with version `N` in its manifest. grab them from [releases](../../releases),
+every file there is attested by github actions. to check the file you got was built by this repo's
+CI from the tagged commit:
 
 ```sh
 gh attestation verify noads.inu.js --repo idkmaybedeveloper/tosbreaker
 ```
 
-per-commit builds (unattested) are in the `build` workflow's artifacts.
+per-commit builds (unattested, version `dev`) are in the `build` workflow's artifacts.
 
-cutting one: bump the plugin's `version` in `inu.config.ts`, push, then run the `release` workflow
-with the plugin's key (`gh workflow run release.yml -f plugin=noads`). it builds, attests and
-publishes `<plugin>-v<version>`, with notes since that plugin's previous release; it refuses to
-overwrite an existing tag.
+cutting one: optionally write `changelogs/<N>.md` (see [changelogs/README.md](changelogs/README.md)),
+push, then `gh workflow run release.yml`. N is the highest `v*` tag plus one, nothing to bump by
+hand. local builds are `dev` unless `TOSBREAKER_BUILD` is set.
 
 ## adding a plugin
 
