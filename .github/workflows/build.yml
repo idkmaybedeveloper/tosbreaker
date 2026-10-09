@@ -27,9 +27,6 @@ permissions: {}
 
 env:
   ARTIFACT_NAME: ${{ inputs.artifact-name || format('tosbreaker-build-{0}', github.run_id) }}
-  #the sdk isn't on npm yet, it's built from this inugram ref; see scripts/setup-sdk.ts
-  INUGRAM_REPO: ${{ vars.INUGRAM_REPO || 'teidesu/inugram' }}
-  INUGRAM_REF: ${{ vars.INUGRAM_REF || 'plugins' }}
 
 jobs:
   build:
@@ -39,54 +36,30 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          path: tosbreaker
-
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          repository: ${{ env.INUGRAM_REPO }}
-          ref: ${{ env.INUGRAM_REF }}
-          path: inugram
 
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
-        with:
-          package_json_file: tosbreaker/package.json
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
           cache: pnpm
-          cache-dependency-path: |
-            tosbreaker/pnpm-lock.yaml
-            inugram/pnpm-lock.yaml
 
-      - name: cache telegram sources
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-        with:
-          path: tosbreaker/.sdk-cache/telegram
-          key: tg-${{ hashFiles('inugram/upstream-commit') }}
-
-      - name: set up sdk
-        working-directory: tosbreaker
-        run: pnpm setup-sdk
+      - run: pnpm install --frozen-lockfile
 
       - name: check
-        working-directory: tosbreaker
         run: pnpm check && pnpm check-scripts && pnpm lint
 
       - name: build
-        working-directory: tosbreaker
         run: pnpm build
 
       - name: stage artifacts
-        working-directory: tosbreaker
         run: |
           mkdir -p out
           cp dist/*.inu.js out/
-          INUGRAM_SHA=$(git -C ../inugram rev-parse HEAD) node scripts/build-info.ts dist out/build-info.json
+          node scripts/build-info.ts dist out/build-info.json
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: tosbreaker/out/*
+          path: out/*
           if-no-files-found: error
           retention-days: ${{ inputs.artifact-name && 1 || 30 }}

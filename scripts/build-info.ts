@@ -9,6 +9,8 @@ if (!distDir || !outFile) {
 
 const SUFFIX = '.inu.js'
 
+const sdkVersion: string = JSON.parse(readFileSync(new URL('../node_modules/@inugram/cli/package.json', import.meta.url), 'utf8')).version
+
 const plugins = readdirSync(distDir)
   .filter(file => file.endsWith(SUFFIX))
   .sort()
@@ -26,8 +28,7 @@ const info = {
   plugins,
   commitSha: process.env.GITHUB_SHA ?? null,
   repo: process.env.GITHUB_REPOSITORY ?? null,
-  inugramRepo: process.env.INUGRAM_REPO ?? null,
-  inugramSha: process.env.INUGRAM_SHA ?? null,
+  sdk: `@inugram/cli@${sdkVersion}`,
 }
 writeFileSync(outFile, `${JSON.stringify(info, null, 2)}\n`)
 

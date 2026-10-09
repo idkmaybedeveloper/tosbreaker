@@ -80,9 +80,8 @@ jobs:
           FILE: ${{ steps.pick.outputs.file }}
         run: |
           # shellcheck disable=SC2016 # the backticks are literal markdown
-          notes=$(printf 'built against %s@%s\n\nverify: `gh attestation verify %s --repo %s`' \
-            "$(jq -r .inugramRepo out/build-info.json)" "$(jq -r .inugramSha out/build-info.json)" \
-            "$FILE" "$GITHUB_REPOSITORY")
+          notes=$(printf 'built against %s\n\nverify: `gh attestation verify %s --repo %s`' \
+            "$(jq -r .sdk out/build-info.json)" "$FILE" "$GITHUB_REPOSITORY")
           previous=$(gh release list --repo "$GITHUB_REPOSITORY" --json tagName --jq \
             "[.[].tagName | select(startswith(\"$PLUGIN-v\"))][0] // empty")
           gh release create "$TAG" \

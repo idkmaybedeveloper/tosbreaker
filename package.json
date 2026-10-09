@@ -7,7 +7,6 @@
     "node": ">=24"
   },
   "scripts": {
-    "setup-sdk": "node scripts/setup-sdk.ts",
     "build": "inu build",
     "check": "inu check",
     "check-scripts": "tsc -p scripts",
@@ -19,8 +18,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^8.3.0",
-    "@inugram/cli": "link:../inugram/sdk/cli/dist",
-    "@inugram/plugin-types": "link:../inugram/sdk/types",
+    "@inugram/cli": "^44.0.0",
+    "@inugram/plugin-types": "^44.0.0",
     "@types/node": "^24.13.6",
     "eslint": "^10.11.0",
     "husky": "^9.1.7",

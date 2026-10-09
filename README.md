@@ -7,23 +7,14 @@ through `src/shared/`. what's inside: [FEATURES.md](FEATURES.md).
 
 ## setup
 
-the inugram plugin sdk (`@inugram/cli`, `@inugram/plugin-types`) isn't published yet, so it's
-linked from an inugram checkout on the `plugins` branch, expected **next to this repo**:
-
-<!--TODO: update after inugram plugins officially released -->
 ```sh
-git clone -b plugins https://github.com/teidesu/inugram.git ../inugram
-pnpm setup-sdk
+pnpm install
 ```
 
-`setup-sdk` builds the cli, generates the TL typings the sdk needs and runs `pnpm install` here.
-first run sparse-clones a bit of stock telegram into `.sdk-cache/` (skipped if the inugram
-checkout has a `worktree/`). checkout lives elsewhere? `INUGRAM_DIR=/path/to/inugram pnpm setup-sdk`,
-but the `link:` paths in `package.json` still expect `../inugram`, so a symlink is easier.
+the sdk (`@inugram/cli`, `@inugram/plugin-types`) comes from npm. its major version is the
+inugram build number it was cut from, so bump both together when targeting a newer app.
 
-rerun it after pulling inugram.
-
-requirements: node >= 24 (the sdk build needs it), pnpm, git, adb for `dev`.
+requirements: node >= 24, pnpm, adb for `dev`.
 
 ## usage
 
@@ -53,7 +44,7 @@ if scripts changed. skip it with `git commit --no-verify` or `SKIP_PRE_COMMIT=1`
 optional, the scripts above use the local one:
 
 ```sh
-cd ../inugram/sdk/cli/dist && pnpm link --global
+pnpm add -g @inugram/cli
 ```
 
 ## releases
