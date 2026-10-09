@@ -21,5 +21,22 @@ export default defineConfig({
         ],
       },
     },
+    nostatuses: {
+      entry: 'src/nostatuses/index.ts',
+      manifest: {
+        id: 'lain.tosbreaker.nostatuses',
+        name: 'no statuses',
+        author: 'damir',
+        version: VERSION,
+        description: {
+          en: 'hides your read and typing statuses',
+          ru: 'скрывает ваш статус прочтения и печатанья',
+        },
+        icon: 'inu://mute',
+        grants: [
+          'interceptRpc(messages.readHistory,messages.readMessageContents,channels.readHistory,channels.readMessageContents,messages.setTyping,messages.setEncryptedTyping)',
+        ],
+      },
+    },
   },
 })
