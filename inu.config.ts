@@ -26,15 +26,16 @@ export default defineConfig({
       manifest: {
         id: 'lain.tosbreaker.nostatuses',
         name: 'no statuses',
-        author: 'damir',
+        author: 'damir, sophietelle',
         version: VERSION,
         description: {
-          en: 'hides your read and typing statuses',
-          ru: 'скрывает ваш статус прочтения и печатанья',
+          en: 'hides your read, typing and online statuses',
+          ru: 'скрывает ваш статус прочтения, печатанья и онлайна',
         },
         icon: 'inu://mute',
         grants: [
-          'interceptRpc(messages.readHistory,messages.readMessageContents,channels.readHistory,channels.readMessageContents,messages.setTyping,messages.setEncryptedTyping)',
+          'interceptRpc(messages.readHistory,messages.readMessageContents,channels.readHistory,channels.readMessageContents,messages.setTyping,messages.setEncryptedTyping,account.updateStatus,messages.sendMessage,messages.sendMedia,messages.sendMultiMedia,messages.forwardMessages,messages.sendInlineBotResult,messages.sendReaction,messages.editMessage,messages.sendVote,stories.sendStory)',
+          'invokeRpc(account.updateStatus)',
         ],
       },
     },
