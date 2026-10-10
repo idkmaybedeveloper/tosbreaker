@@ -11,3 +11,7 @@ every plugin is installed on its own, everything inside is toggleable in its set
 - hide sponsored messages in channels, bot chats and the video player (`messages.getSponsoredMessages` answers empty, the request never leaves the device)
 - hide sponsored results in search (`contacts.getSponsoredPeers`)
 - hide the proxy sponsored channel pinned in the chat list while using an MTProxy; psa announcements are left alone, pending suggestions from the same response are lost
+## `nostatuses`
+
+- hide read receipts (`messages.readHistory`, `channels.readHistory` and `readMessageContents` answer locally)
+- hide typing status (`messages.setTyping`, `messages.setEncryptedTyping`)
