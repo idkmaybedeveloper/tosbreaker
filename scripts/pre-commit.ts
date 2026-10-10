@@ -1,10 +1,9 @@
 import { execFileSync } from 'node:child_process'
 
 /*
- * checks only what the commit touches: eslint over the staged files, `inu check` when plugin code
- * or the plugin config changed, and the scripts typecheck when node-side code changed. eslint
- * reads the working tree copy, so a file staged partially is linted with its unstaged edits too;
- * `pnpm lint` in ci is the one that counts. skip with --no-verify or SKIP_PRE_COMMIT=1
+ * checks only what the commit touches: eslint on staged files, `inu check` on plugin changes,
+ * the scripts typecheck on node-side changes. eslint reads the working tree, so partially staged
+ * files include unstaged edits; ci `pnpm lint` is authoritative
  */
 
 if (process.env.SKIP_PRE_COMMIT) process.exit(0)

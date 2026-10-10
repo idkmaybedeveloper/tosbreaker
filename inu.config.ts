@@ -38,5 +38,35 @@ export default defineConfig({
         ],
       },
     },
+    onetimeallower: {
+      entry: 'src/onetimeallower/index.ts',
+      manifest: {
+        id: 'lain.tosbreaker.onetimeallower',
+        name: 'one-time allower',
+        author: 'bitracker',
+        version: VERSION,
+        description: {
+          en: 'screenshots and saving for one-time photos, videos and voice messages, without telling the sender',
+          ru: 'скриншоты и сохранение одноразовых фото, видео и голосовых, без уведомления отправителю',
+        },
+        icon: 'inu://eye',
+        grants: ['unsafe.jvm', 'unsafe.xposed'],
+      },
+    },
+    screenallower: {
+      entry: 'src/screenallower/index.ts',
+      manifest: {
+        id: 'lain.tosbreaker.screenallower',
+        name: 'screen allower',
+        author: 'bitracker',
+        version: VERSION,
+        description: {
+          en: 'allows screenshots everywhere and ignores "restrict saving content" in chats',
+          ru: 'разрешает скриншоты везде и игнорирует запрет на сохранение контента в чатах',
+        },
+        icon: 'inu://download',
+        grants: ['unsafe.jvm', 'unsafe.xposed'],
+      },
+    },
   },
 })

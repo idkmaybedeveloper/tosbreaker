@@ -1,4 +1,5 @@
 import antfu from '@antfu/eslint-config'
+import { createSlopConfig } from 'eslint-plugin-slop'
 
 export default antfu({
   ignores: [
@@ -23,4 +24,7 @@ export default antfu({
     'ts/method-signature-style': 'off',
     'antfu/top-level-function': 'off',
   },
-})
+}, ...createSlopConfig({
+  cwd: import.meta.dirname,
+  inspection: 'full',
+}))

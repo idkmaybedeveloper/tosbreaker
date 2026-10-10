@@ -16,10 +16,9 @@ const sponsoredPeers = new Toggle({
 })
 
 /*
- * help.promoData also carries psa announcements and pending suggestions, so only the proxy
- * sponsored channel gets dropped. stock can't handle a promoData without a peer, which is why
- * the whole response turns into promoDataEmpty instead of just losing its peer field; the
- * `expires` is kept so stock doesn't start polling it more often than the server asked for
+ * promoData also carries psa and pending suggestions, so only proxy responses are dropped.
+ * stock crashes on a promoData without a peer, hence promoDataEmpty instead of removing the
+ * peer. `expires` stays so stock doesn't poll more often than asked
  */
 const proxyPromo = new Toggle({
   key: 'proxy_promo',
