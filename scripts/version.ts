@@ -2,10 +2,9 @@ import { execFileSync } from 'node:child_process'
 import { appendFileSync } from 'node:fs'
 
 /*
- * one build number for every plugin, like inugram's INU_BUILD, but derived from the tags instead of
- * a repo variable, so releasing needs no extra token: the next build is the highest `v<N>` tag plus
- * one. the workflow passes it to `inu build` through TOSBREAKER_BUILD, which inu.config.ts puts into
- * each manifest's version. `changelogs/<N>.md` becomes the release notes when it exists
+ * one build number for every plugin: the highest `v<N>` tag plus one, so releasing needs no repo
+ * variable or extra token. it reaches each manifest version through TOSBREAKER_BUILD, and
+ * `changelogs/<N>.md` becomes the release notes when it exists
  */
 
 const TAG = /^v(\d+)$/
