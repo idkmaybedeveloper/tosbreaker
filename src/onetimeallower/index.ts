@@ -3,8 +3,9 @@ import { Toggle } from '../shared/toggle.js'
 
 /*
  * SecretMediaViewer sets FLAG_SECURE in its overlay LayoutParams, SecretVoicePlayer (a Dialog) in
- * Window.setAttributes. only those windows match: the viewer's root view is its own anonymous
- * class, and a dialog window reports the dialog as its callback
+ * Window.setAttributes. the viewer's root view is an anonymous class matched by View.toString,
+ * since a Class value in a routine is treated as a static receiver. a dialog window reports the
+ * dialog as its callback
  */
 const screenshots = new Toggle({
   key: 'screenshots',
@@ -22,7 +23,7 @@ const screenshots = new Toggle({
         before: inu.xposed.routine((ctx) => {
           const view = ctx.args[0]
           const params = ctx.args[1]
-          if (view !== null && params instanceof LayoutParams && view.getClass().getName().startsWith(VIEWER_PREFIX)) {
+          if (view !== null && params instanceof LayoutParams && view.toString().startsWith(VIEWER_PREFIX)) {
             params.flags = params.flags & ~FLAG_SECURE
           }
         }),
