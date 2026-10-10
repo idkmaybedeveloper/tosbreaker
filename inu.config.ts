@@ -49,7 +49,7 @@ export default defineConfig({
           en: 'screenshots and saving for one-time photos, videos and voice messages, without telling the sender',
           ru: 'скриншоты и сохранение одноразовых фото, видео и голосовых, без уведомления отправителю',
         },
-        icon: 'inu://eye',
+        icon: 'inu://bookmark',
         grants: ['unsafe.jvm', 'unsafe.xposed'],
       },
     },
