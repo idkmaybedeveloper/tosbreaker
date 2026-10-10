@@ -53,5 +53,20 @@ export default defineConfig({
         grants: ['unsafe.jvm', 'unsafe.xposed'],
       },
     },
+    screenallower: {
+      entry: 'src/screenallower/index.ts',
+      manifest: {
+        id: 'lain.tosbreaker.screenallower',
+        name: 'screen allower',
+        author: 'bitracker',
+        version: VERSION,
+        description: {
+          en: 'allows screenshots everywhere and ignores "restrict saving content" in chats',
+          ru: 'разрешает скриншоты везде и игнорирует запрет на сохранение контента в чатах',
+        },
+        icon: 'inu://download',
+        grants: ['unsafe.jvm', 'unsafe.xposed'],
+      },
+    },
   },
 })
