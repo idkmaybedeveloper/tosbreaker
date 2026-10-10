@@ -15,3 +15,12 @@ every plugin is installed on its own, everything inside is toggleable in its set
 
 - hide read receipts (`messages.readHistory`, `channels.readHistory` and `readMessageContents` answer locally)
 - hide typing status (`messages.setTyping`, `messages.setEncryptedTyping`)
+
+## `onetimeallower`
+
+needs `unsafe.jvm` + `unsafe.xposed`: `FLAG_SECURE`, the message menu and screenshot detection all
+live in app ui code, no public plugin api reaches them.
+
+- screenshots of one-time media: `FLAG_SECURE` is stripped only from the `SecretMediaViewer` window (photos, videos) and the `SecretVoicePlayer` dialog (voice and round "once")
+- "save to gallery" in the message menu for one-time media: `needDrawBluredPreview`/`isVoiceOnce`/`isRoundOnce` answer false only while `ChatActivity.createMenu` runs. photos are already on disk, videos have to be loaded first; view-once disappears after viewing, so save before opening
+- no screenshot notifications: `MediaController.checkScreenshots` is skipped, so neither `messages.sendScreenshotNotification` nor the secret chat screenshot action is sent

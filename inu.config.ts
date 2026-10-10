@@ -38,5 +38,20 @@ export default defineConfig({
         ],
       },
     },
+    onetimeallower: {
+      entry: 'src/onetimeallower/index.ts',
+      manifest: {
+        id: 'lain.tosbreaker.onetimeallower',
+        name: 'one-time allower',
+        author: 'bitracker',
+        version: VERSION,
+        description: {
+          en: 'screenshots and saving for one-time photos, videos and voice messages, without telling the sender',
+          ru: 'скриншоты и сохранение одноразовых фото, видео и голосовых, без уведомления отправителю',
+        },
+        icon: 'inu://eye',
+        grants: ['unsafe.jvm', 'unsafe.xposed'],
+      },
+    },
   },
 })
