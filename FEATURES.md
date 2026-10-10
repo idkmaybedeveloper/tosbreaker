@@ -13,6 +13,7 @@ every plugin is installed on its own, everything inside is toggleable in its set
 - hide the proxy sponsored channel pinned in the chat list while using an MTProxy; psa announcements are left alone, pending suggestions from the same response are lost
 ## `nostatuses`
 
+- hide online status, aka ghost mode (`account.updateStatus`); forces the two below on
 - hide read receipts (`messages.readHistory`, `channels.readHistory` and `readMessageContents` answer locally)
 - hide typing status (`messages.setTyping`, `messages.setEncryptedTyping`)
 
