@@ -31,6 +31,6 @@ needs `unsafe.jvm` + `unsafe.xposed`: same as `onetimeallower`, plus `noforwards
 app ui code, and stripping it from api responses would mean rewriting every method returning chats
 or messages.
 
-- screenshots everywhere: `FLAG_SECURE` is stripped in `Window.setFlags`/`setAttributes` and `WindowManagerGlobal.addView`/`updateViewLayout` (protected and secret chats, PhotoViewer, one-time media, stories, passcode screen, everything)
+- screenshots everywhere: `FLAG_SECURE` is stripped in `Window.setFlags`/`setAttributes` and `WindowManagerImpl.addView`/`updateViewLayout` (protected and secret chats, PhotoViewer, one-time media, stories, passcode screen, everything)
 - ignore "restrict saving content": `MessagesController.isChatNoForwards`/`isUserNoForwards` answer false, `message.noforwards` is cleared when a `MessageObject` is built. copy/save/share open up; server-side forwarding is still refused
 - no screenshot notifications, same as in `onetimeallower`

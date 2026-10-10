@@ -4,7 +4,7 @@ import { Toggle } from '../shared/toggle.js'
 /*
  * FLAG_SECURE arrives three ways: Window.setFlags (FlagSecureReason, stories), Window.setAttributes
  * (dialogs, passcode), and raw LayoutParams in addView/updateViewLayout (PhotoViewer,
- * SecretMediaViewer, StoryViewer). every addView ends up in WindowManagerGlobal
+ * SecretMediaViewer, StoryViewer). every app WindowManager is a WindowManagerImpl
  */
 const screenshots = new Toggle({
   key: 'screenshots',
@@ -27,13 +27,13 @@ const screenshots = new Toggle({
           if (params !== null) params.flags = params.flags & ~FLAG_SECURE
         }),
       }),
-      () => inu.xposed.hookAllOverloads(inu.jvm.cls('android.view.WindowManagerGlobal'), 'addView', {
+      () => inu.xposed.hookAllOverloads(inu.jvm.cls('android.view.WindowManagerImpl'), 'addView', {
         before: inu.xposed.routine((ctx) => {
           const params = ctx.args[1]
           if (params instanceof LayoutParams) params.flags = params.flags & ~FLAG_SECURE
         }),
       }),
-      () => inu.xposed.hookAllOverloads(inu.jvm.cls('android.view.WindowManagerGlobal'), 'updateViewLayout', {
+      () => inu.xposed.hookAllOverloads(inu.jvm.cls('android.view.WindowManagerImpl'), 'updateViewLayout', {
         before: inu.xposed.routine((ctx) => {
           const params = ctx.args[1]
           if (params instanceof LayoutParams) params.flags = params.flags & ~FLAG_SECURE

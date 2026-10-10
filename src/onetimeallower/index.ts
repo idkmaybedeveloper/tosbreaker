@@ -18,7 +18,7 @@ const screenshots = new Toggle({
     const VIEWER_PREFIX = 'org.telegram.ui.SecretMediaViewer$'
     return tryHooks(
       'screenshots',
-      () => inu.xposed.hookAllOverloads(inu.jvm.cls('android.view.WindowManagerGlobal'), 'addView', {
+      () => inu.xposed.hookAllOverloads(inu.jvm.cls('android.view.WindowManagerImpl'), 'addView', {
         before: inu.xposed.routine((ctx) => {
           const view = ctx.args[0]
           const params = ctx.args[1]
