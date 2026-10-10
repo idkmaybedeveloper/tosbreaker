@@ -34,7 +34,7 @@ export default defineConfig({
         },
         icon: 'inu://mute',
         grants: [
-          'interceptRpc(messages.readHistory,messages.readMessageContents,channels.readHistory,channels.readMessageContents,messages.setTyping,messages.setEncryptedTyping,account.updateStatus,messages.sendMessage,messages.sendMedia,messages.sendMultiMedia,messages.forwardMessages,messages.sendInlineBotResult)',
+          'interceptRpc(messages.readHistory,messages.readMessageContents,channels.readHistory,channels.readMessageContents,messages.setTyping,messages.setEncryptedTyping,account.updateStatus,messages.sendMessage,messages.sendMedia,messages.sendMultiMedia,messages.forwardMessages,messages.sendInlineBotResult,messages.sendReaction,messages.editMessage,messages.sendVote,stories.sendStory)',
           'invokeRpc(account.updateStatus)',
         ],
       },
