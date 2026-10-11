@@ -1,17 +1,18 @@
 import { combineDisposers } from '../shared/disposer.js'
 import { Toggle } from '../shared/toggle.js'
 
-function sendStatus(account: inu.Account, offline: boolean): void {
-  account
+function sendStatus(offline: boolean): void {
+  inu
     .invokeRpc({ _: 'account.updateStatus', offline })
     .catch(e => console.error('nostatuses: account.updateStatus failed', e))
 }
 
 function registerOnlineHider(): Disposer {
-  const timers = new Map<number, number>()
+  // do NOT make this per account, inactive accounts are already offline
+  let timer: number | undefined
   let disposed = false
 
-  inu.accounts().forEach(account => sendStatus(account, true))
+  sendStatus(true)
   return combineDisposers(
     inu.interceptRpc('account.updateStatus', (ctx, next) => ctx.request.offline ? next() : { _: 'boolTrue' }),
 
@@ -25,23 +26,21 @@ function registerOnlineHider(): Disposer {
       'messages.editMessage',
       'messages.sendVote',
       'stories.sendStory',
-    ], async (ctx, next) => {
+    ], async (_ctx, next) => {
       const res = await next()
       if (disposed) return res
 
-      const { account } = ctx
-      clearTimeout(timers.get(account.id))
-      timers.set(account.id, setTimeout(() => {
-        timers.delete(account.id)
-        sendStatus(account, true)
-      }, 1000 /* offline after send ms */))
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        clearTimeout(timer)
+        sendStatus(true)
+      }, 1000 /* offline after send ms */)
       return res
     }),
     () => {
       disposed = true
-      timers.forEach(timer => clearTimeout(timer))
-      timers.clear()
-      inu.accounts().forEach(account => sendStatus(account, false))
+      clearTimeout(timer)
+      sendStatus(false)
     },
   )
 }
