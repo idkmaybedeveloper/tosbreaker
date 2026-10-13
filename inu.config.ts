@@ -107,5 +107,23 @@ export default defineConfig({
         ],
       },
     },
+    ghostmode: {
+      entry: 'src/ghostmode/index.ts',
+      manifest: {
+        id: 'lain.tosbreaker.ghostmode',
+        name: 'ghost mode',
+        author: '@prada101010',
+        version: VERSION,
+        description: {
+          en: 'hides read receipts, story views and typing indicators',
+          ru: 'скрывает отчёты о прочтении, просмотры историй и индикаторы набора текста',
+        },
+        icon: 'inu://eyeOff',
+        grants: [
+          'interceptRpc(messages.readHistory,messages.readMessageContents,channels.readHistory,channels.readMessageContents,messages.readEncryptedHistory,messages.readDiscussion,messages.readSavedHistory,stories.incrementStoryViews,messages.setTyping,messages.setEncryptedTyping)',
+          'unsafe.jvm',
+        ],
+      },
+    },
   },
 })
