@@ -69,5 +69,43 @@ export default defineConfig({
         grants: ['unsafe.jvm', 'unsafe.xposed'],
       },
     },
+    deletedmessage: {
+      entry: 'src/deletedmessage/index.ts',
+      manifest: {
+        id: 'lain.tosbreaker.deletedmessage',
+        name: 'keep deleted messages',
+        author: '@prada101010',
+        version: VERSION,
+        description: {
+          en: 'keeps deleted messages visible and dims them',
+          ru: 'оставляет удалённые сообщения видимыми и затеняет их',
+        },
+        icon: 'inu://delete',
+        grants: [
+          'interceptUpdate(updateDeleteMessages,updateDeleteChannelMessages)',
+          'fs',
+          'unsafe.jvm',
+          'unsafe.xposed',
+        ],
+      },
+    },
+    edithistory: {
+      entry: 'src/edithistory/index.ts',
+      manifest: {
+        id: 'lain.tosbreaker.edithistory',
+        name: 'edit history',
+        author: '@prada101010',
+        version: VERSION,
+        description: {
+          en: 'keeps the previous versions of edited messages',
+          ru: 'хранит предыдущие версии отредактированных сообщений',
+        },
+        icon: 'inu://edit',
+        grants: [
+          'onUpdate(new_message,edit_message)',
+          'fs',
+        ],
+      },
+    },
   },
 })
