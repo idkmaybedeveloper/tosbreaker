@@ -60,19 +60,3 @@ no unsafe grants: the whole feature is public plugin api (`onUpdate`, `registerM
 - "edit history" in the message menu opens the stored versions in a synthetic chat page, newest
   first. at most 50 versions per message, 2000 overall and 500 snapshots, all expiring after seven
   days
-
-## `ghostmode`
-
-needs `unsafe.jvm`: the read RPCs return `messages.affectedMessages`, which the app feeds into its
-update state; no public plugin api exposes the account's current `pts`, so it is echoed from
-`MessagesStorage` to make the response a no-op instead of forcing a difference fetch.
-
-- ghost read: `messages.readHistory`, `messages.readMessageContents`, `channels.readHistory`,
-  `channels.readMessageContents`, `messages.readEncryptedHistory`, `messages.readDiscussion` and
-  `messages.readSavedHistory` answer locally and never reach the server. unread badges can come
-  back after a restart, because the server keeps its own unread state
-- ghost story: `stories.incrementStoryViews` answers locally, so the owner never learns you looked.
-  story rings can come back after a restart
-- ghost presence: `messages.setTyping` (typing, recording, upload) and `messages.setEncryptedTyping`
-  answer locally; the cancel action still goes through, it only clears an indicator the other side
-  never saw. the account's own "online" ping is not sent through this RPC
