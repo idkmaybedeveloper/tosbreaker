@@ -10,6 +10,8 @@
  * compares both the text and its entities.
  */
 
+import { writeCacheFile } from '../shared/cache-file.js'
+
 interface EditVersion {
   text: TextWithEntities
   date: number
@@ -27,6 +29,7 @@ const MAX_CACHED_MESSAGES = 500
 const CACHE_FILE = 'edit-history.json'
 const TTL = 7 * 24 * 60 * 60 * 1000
 let cacheLoaded = false
+let saveTimer: number | null = null
 
 const keyOf = (accountId: number, id: number): string => `${accountId}:${id}`
 
@@ -55,15 +58,20 @@ function prune(now: number): void {
 }
 
 function persist(): void {
+  saveTimer = null
   const payload = {
     snapshots: [...snapshots.entries()],
     history: [...history.entries()].map(([key, versions]) => [key, versions.slice(-MAX_VERSIONS)]),
   }
   try {
-    inu.fs.write(CACHE_FILE, new TextEncoder().encode(JSON.stringify(payload)))
+    writeCacheFile(CACHE_FILE, payload)
   } catch (error) {
     console.warn('edithistory: cache write failed', error)
   }
+}
+
+function scheduleSave(): void {
+  if (saveTimer === null) saveTimer = setTimeout(persist, 25)
 }
 
 function loadCache(): void {
@@ -78,7 +86,7 @@ function loadCache(): void {
     for (const [key, version] of payload.snapshots ?? []) snapshots.set(key, version)
     for (const [key, versions] of payload.history ?? []) history.set(key, versions.slice(-MAX_VERSIONS))
     prune(Date.now())
-    persist()
+    scheduleSave()
   } catch {
     try { inu.fs.rm(CACHE_FILE) } catch {}
   }
@@ -117,7 +125,7 @@ export function trackEdit(message: inu.Message, accountId: number): void {
   const previous = snapshots.get(key)
   snapshots.set(key, current)
   if (previous === undefined || sameText(previous.text, current.text)) {
-    persist()
+    scheduleSave()
     return
   }
   let versions = history.get(key)
@@ -133,8 +141,14 @@ export function trackEdit(message: inu.Message, accountId: number): void {
     const oldestKey = history.keys().next().value
     if (oldestKey !== undefined) history.delete(oldestKey)
   }
-  persist()
+  scheduleSave()
 }
+
+inu.onUnload(() => {
+  if (saveTimer === null) return
+  clearTimeout(saveTimer)
+  persist()
+})
 
 /** Open the stored versions as a chat-style history, newest first. */
 export function installEditHistory(): Disposer {

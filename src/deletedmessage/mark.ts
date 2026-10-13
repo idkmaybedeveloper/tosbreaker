@@ -43,8 +43,9 @@ export function installDeletedMarking(initiallyOn: boolean): void {
     const object = cell.getMessageObject()
     if (object === null) return
     const id = object.getId()
-    const key = `${object.getDialogId()}:${id}`
-    const fallback = `0:${id}`
+    const accountId = object.currentAccount
+    const key = `${accountId}:${object.getDialogId()}:${id}`
+    const fallback = `${accountId}:0:${id}`
     let alpha = 1.0
     if (ON.get() && (KEYS.contains(key) || KEYS.contains(fallback))) alpha = 0.5
     cell.setAlpha(alpha)

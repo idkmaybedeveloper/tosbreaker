@@ -7,46 +7,46 @@
  * unique per account, so the common box is tracked under `0`.
  */
 
-const deleted = new Map<number, Set<number>>()
-const deletedExpiry = new Map<string, number>()
+import { writeCacheFile } from '../shared/cache-file.js'
+
+const deleted = new Map<string, DeletedRecord>()
 const CACHE_FILE = 'deleted-cache.json'
 const TTL = 7 * 24 * 60 * 60 * 1000
 let javaKeys: JavaObject | null = null
 let loaded = false
+let saveTimer: number | null = null
 
-interface DeletedRecord { dialogId: number, id: number, expires: number }
+interface DeletedRecord { accountId: number, dialogId: number, id: number, expires: number }
 
-const keyOf = (dialogId: number, id: number): string => `${dialogId}:${id}`
+const keyOf = (accountId: number, dialogId: number, id: number): string => `${accountId}:${dialogId}:${id}`
 
 function persistDeleted(): void {
+  saveTimer = null
+  const now = Date.now()
   const records: DeletedRecord[] = []
-  for (const [dialogId, ids] of deleted) {
-    for (const id of ids) {
-      const expires = deletedExpiry.get(keyOf(dialogId, id))
-      if (expires !== undefined && expires > Date.now()) records.push({ dialogId, id, expires })
-    }
+  for (const record of deleted.values()) {
+    if (record.expires > now) records.push(record)
   }
   try {
-    inu.fs.write(CACHE_FILE, new TextEncoder().encode(JSON.stringify(records)))
+    writeCacheFile(CACHE_FILE, records)
   } catch (error) {
     console.warn('deletedmessage: cache write failed', error)
   }
 }
 
-function recordDeletion(dialogId: number, ids: number[], save = true): void {
-  let values = deleted.get(dialogId)
-  if (values === undefined) {
-    values = new Set()
-    deleted.set(dialogId, values)
-  }
+function scheduleSave(): void {
+  if (saveTimer === null) saveTimer = setTimeout(persistDeleted, 25)
+}
+
+function recordDeletion(accountId: number, dialogId: number, ids: number[]): void {
+  const now = Date.now()
   for (const id of ids) {
-    values.add(id)
-    const key = keyOf(dialogId, id)
-    const expires = deletedExpiry.get(key)
-    if (expires === undefined || expires <= Date.now()) deletedExpiry.set(key, Date.now() + TTL)
+    const key = keyOf(accountId, dialogId, id)
+    const record = deleted.get(key)
+    if (record === undefined || record.expires <= now) deleted.set(key, { accountId, dialogId, id, expires: now + TTL })
     try { javaKeys?.call('add', key) } catch {}
   }
-  if (save) persistDeleted()
+  scheduleSave()
 }
 
 function loadDeleted(): void {
@@ -57,12 +57,10 @@ function loadDeleted(): void {
     const records = JSON.parse(new TextDecoder().decode(inu.fs.read(CACHE_FILE))) as DeletedRecord[]
     const now = Date.now()
     for (const record of records) {
-      if (record.expires > now) {
-        deletedExpiry.set(keyOf(record.dialogId, record.id), record.expires)
-        recordDeletion(record.dialogId, [record.id], false)
-      }
+      if (typeof record.accountId !== 'number') continue
+      if (record.expires > now) deleted.set(keyOf(record.accountId, record.dialogId, record.id), record)
     }
-    if (records.some(record => record.expires <= now)) persistDeleted()
+    if (records.length !== deleted.size) scheduleSave()
   } catch {
     try { inu.fs.rm(CACHE_FILE) } catch {}
   }
@@ -74,9 +72,7 @@ function keySet(): JavaObject | null {
     // SAFETY: unsafe.jvm: the marking routine runs on the app thread and can't call into js, so the
     // recorded keys live in a java HashSet it can read directly
     javaKeys = new (inu.jvm.cls('java.util.HashSet'))()
-    for (const [dialogId, ids] of deleted) {
-      for (const id of ids) javaKeys.call('add', keyOf(dialogId, id))
-    }
+    for (const key of deleted.keys()) javaKeys.call('add', key)
     return javaKeys
   } catch {
     return null
@@ -89,11 +85,17 @@ export function deletedKeySet(): JavaObject | null {
   return keySet()
 }
 
-export function recordChannelDeletion(channelId: number, ids: number[]): void {
-  recordDeletion(-channelId, ids)
-  recordDeletion(channelId, ids)
+export function recordChannelDeletion(accountId: number, channelId: number, ids: number[]): void {
+  recordDeletion(accountId, -channelId, ids)
+  recordDeletion(accountId, channelId, ids)
 }
 
-export function recordCommonBoxDeletion(ids: number[]): void {
-  recordDeletion(0, ids)
+export function recordCommonBoxDeletion(accountId: number, ids: number[]): void {
+  recordDeletion(accountId, 0, ids)
 }
+
+inu.onUnload(() => {
+  if (saveTimer === null) return
+  clearTimeout(saveTimer)
+  persistDeleted()
+})

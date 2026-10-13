@@ -15,8 +15,8 @@ const keepDeleted = new Toggle({
     ['updateDeleteMessages', 'updateDeleteChannelMessages'],
     (context) => {
       const update = context.update
-      if (update._ === 'updateDeleteChannelMessages') recordChannelDeletion(update.channel_id, update.messages)
-      else recordCommonBoxDeletion(update.messages)
+      if (update._ === 'updateDeleteChannelMessages') recordChannelDeletion(context.account.id, update.channel_id, update.messages)
+      else recordCommonBoxDeletion(context.account.id, update.messages)
       return 'drop'
     },
   ),
