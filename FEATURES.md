@@ -14,7 +14,9 @@ every plugin is installed on its own, everything inside is toggleable in its set
 ## `nostatuses`
 
 - hide online status, aka ghost mode (`account.updateStatus`); forces the two below on
-- hide read receipts (`messages.readHistory`, `channels.readHistory` and `readMessageContents` answer locally)
+  - ghost mode shortcut in the chat list context menu
+- hide read receipts (`messages.readHistory`, `channels.readHistory`, `readMessageContents`, `messages.readDiscussion`, `messages.readSavedHistory` answer locally)
+  - "mark as read" in the message menu
 - hide typing status (`messages.setTyping`, `messages.setEncryptedTyping`)
 
 ## `onetimeallower`
